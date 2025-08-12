@@ -1,0 +1,154 @@
+-- OWNER: Real_Noob
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "RealN00B",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "by Real_Noob",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "RealN00B_GUI",
+        FileName = "Settings"
+    }
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+
+local Player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local function safeCall(func)
+    local success, err = pcall(func)
+    if not success then warn(err) end
+end
+
+local walkSpeedSlider = MainTab:CreateSlider({
+    Name = "WalkSpeed",
+    Range = {16, 100},
+    Increment = 1,
+    CurrentValue = 16,
+    Callback = function(val)
+        safeCall(function()
+            if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+                Player.Character.Humanoid.WalkSpeed = val
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "Reset WalkSpeed",
+    Callback = function()
+        safeCall(function()
+            if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+                Player.Character.Humanoid.WalkSpeed = 16
+                walkSpeedSlider:Set(16)
+            end
+        end)
+    end
+})
+
+local espEnabled = false
+local espConnections = {}
+
+local function createESPForPlayer(p)
+    safeCall(function()
+        if p ~= Player and p.Character and p.Character:FindFirstChild("Head") then
+            local head = p.Character.Head
+            if not head:FindFirstChild("ESPBox") then
+                local box = Instance.new("BoxHandleAdornment")
+                box.Adornee = head
+                box.Size = Vector3.new(2, 2, 2)
+                box.Transparency = 0.5
+                box.Color = BrickColor.new("Bright red").Color
+                box.AlwaysOnTop = true
+                box.ZIndex = 10
+                box.Name = "ESPBox"
+                box.Parent = head
+            end
+        end
+    end)
+end
+
+local function removeESPForPlayer(p)
+    safeCall(function()
+        if p.Character and p.Character:FindFirstChild("Head") then
+            local head = p.Character.Head
+            local box = head:FindFirstChild("ESPBox")
+            if box then
+                box:Destroy()
+            end
+        end
+    end)
+end
+
+local function toggleESP(state)
+    espEnabled = state
+    if espEnabled then
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= Player then
+                createESPForPlayer(p)
+                espConnections[p] = p.CharacterAdded:Connect(function()
+                    wait(1)
+                    createESPForPlayer(p)
+                end)
+            end
+        end
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= Player then
+                removeESPForPlayer(p)
+                if espConnections[p] then
+                    espConnections[p]:Disconnect()
+                    espConnections[p] = nil
+                end
+            end
+        end
+    end
+end
+
+MainTab:CreateToggle({
+    Name = "ESP",
+    CurrentValue = false,
+    Callback = function(val)
+        toggleESP(val)
+    end
+})
+
+local noclip = false
+local noclipConnection
+
+MainTab:CreateToggle({
+    Name = "Noclip",
+    CurrentValue = false,
+    Callback = function(val)
+        noclip = val
+        if noclip then
+            noclipConnection = RunService.Stepped:Connect(function()
+                if Player.Character then
+                    for _, part in pairs(Player.Character:GetChildren()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+            end)
+        else
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            if Player.Character then
+                for _, part in pairs(Player.Character:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end
+    end
+})
+
+Rayfield:LoadConfiguration()

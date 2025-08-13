@@ -12,7 +12,7 @@ Enjoy Exploiting, And Yes we Will add more features soon.
 - Headsit
 # Loadstring
 ```
-loadstring(game:HttpGet("https://raw.githubusercontent.com/YourLocal-Dude/Real_N00B/main/main/code", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/YourLocal-Dude/Real_N00B/main/code", true))()
 ```
 # License
 check the license 

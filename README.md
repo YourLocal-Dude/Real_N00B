@@ -1,12 +1,12 @@
 # Real_N00B
-#### Current Version: 1.0.0 BETA
+#### Current Version: 1.0.1 BETA
 Enjoy Exploiting, And Yes we Will add more features soon.
 # Features
 - ESP ( Doesn't Work Yet but Stay Tuned )
 - Speed Slider
+- Fly for Both Mobile and PC
 # Next Update Features
-- Fly for Mobile
-- Fly for PC
+- ESP Fix
 - Bang
 - Headbang
 - Headsit
